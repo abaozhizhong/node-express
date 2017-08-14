@@ -1,0 +1,19 @@
+{
+  "name": "bzlearnexpress",
+  "version": "1.0.0",
+  "description": "bzlearnexpress",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.4",
+    "express3-handlebars": "^0.5.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "run"
+  },
+  "keywords": [
+    "learn"
+  ],
+  "author": "bz",
+  "license": "ISC"
+}
