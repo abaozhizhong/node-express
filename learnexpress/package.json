@@ -9,7 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "run"
+    "test": "run",
+    "dev":"node app.js"
   },
   "keywords": [
     "learn"
