@@ -1,0 +1,38 @@
+<div id="body">
+    <form>
+        <input type="text"  :value="v1" >
+        <input type="radio" :value="v2" >
+        <select name="" id="" :value="v3">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+        </select>
+        <input type="submit" value="提交" @click.prevent="submit()">
+    </form>
+</div>
+<script>
+    var globalData = {
+        v1:'test',
+        v2:100,
+        v3:'A'
+    }
+    var app = new Vue({
+        el:"#body",
+        data:globalData,
+        methods:{
+            submit:function () {
+                alert('in');
+                $.ajax({
+                    type:'POST',
+                    url:"/static/post?form=iamform",
+                    data:globalData,
+                    success:function (data) {
+                        console.log(data);
+                    }
+                })
+            }
+        }
+    })
+
+
+</script>

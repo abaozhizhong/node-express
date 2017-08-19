@@ -1,2 +1,20 @@
 <h1>home</h1>
 <img src="/static/img/timg.jpg" alt="我是黑白猫" style="width: 100px"/>
+<script>
+    $.ajax({
+        type:'get',
+        url:'http://localhost:3000/static/api',
+        data:{blean:true},
+        success:function(data) {
+            console.log(data);
+        }
+    })
+
+    $.ajax({
+        type:'put',
+        url:'http://localhost:3000/static/put#33',
+        success:function (data) {
+            console.log(data);
+        }
+    })
+</script>
