@@ -1,0 +1,31 @@
+<div id="body">
+    <form  enctype="multipart/form-data" action="/static/postimg/{{year}}/{{data}}" method="POST">
+        <input type="file" >
+        <!--<input type="submit" value="提交" @click.prevent='submit()'>-->
+        <input type="submit" value="提交" />
+    </form>
+</div>
+<script>
+    var  app = new Vue({
+        el:'#body',
+        data:{
+            
+        },
+        methods:{
+            submit:function () {
+                $.ajax({
+                    type:"post",
+                    data:{
+                        v1:"v1",
+                        v2:"v2",
+                        v3:'v3'
+                    },
+                    url:"/static/postimg",
+                    success:function (data) {
+                        console.log(data);
+                    }
+                })
+            }
+        }
+    })
+</script>

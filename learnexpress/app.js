@@ -1,6 +1,7 @@
 let express = require('express');
 let app = express();
 var body_parser = require('body-parser');
+var Formidable = require('formidable');
 let public_path = '/static';
 let fortnues = require('./lib/fortnues');
 app.disable('x-powered-by');//屏蔽响应头中存在express的信息
@@ -125,12 +126,34 @@ app.get(public_path+'/form',function (request,respone) {
 app.post(public_path+"/post",function (request,respone) {
     console.log("表单提交");
     console.log(request.query);
-    // console.log('query.form:'+respone.query.form);
+    if(request.xhr==true){
+        console.log("this  is a ajax request");
+    }
     console.log('body.v1:'+request.body.v1);
     console.log('body.v3:'+request.body.v3);
     console.log('body.v2:'+request.body.v2);
 })
 
+
+app.get(public_path+'/postimg',function (request,respone) {
+    respone.render("postimg")
+})
+app.post(public_path+'/postimg',function (request,respone) {
+    // respone.status(200);
+    // console.log("有图片上传");
+    // respone.json({
+    //     message:'success'
+    // })
+    let form = new Formidable.IncomingForm();
+    form.parse(request,function(err,fields,files){
+        if(err){console.log('上传失败');}
+        console.log("received fielsd:");
+        console.log(fields);
+        console.log("receives files:");
+        console.log(files);
+        console.log("跳转链接到。。。。上传成功的页面");
+    })
+})
 
 app.use((err,req,res,next)=> {
     console.error(err.stack);
