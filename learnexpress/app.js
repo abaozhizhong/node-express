@@ -1,7 +1,7 @@
 let express = require('express');
 let app = express();
 var body_parser = require('body-parser');
-var Formidable = require('formidable');
+// var Formidable = require('formidable');
 let public_path = '/static';
 let fortnues = require('./lib/fortnues');
 app.disable('x-powered-by');//屏蔽响应头中存在express的信息
@@ -98,7 +98,7 @@ app.get(public_path+'/greeting',function (request,respone) {
 })
 
 //使用定制布局渲染
-app.get(public_path+'/layout',function (request,respone) {
+app.get(public_path+'/layout',function (request,respone)    {
         console.log('LAYOUT');
         respone.render('a',{layout:'custom'});
 })
@@ -106,7 +106,7 @@ app.get(public_path+'/layout',function (request,respone) {
 //渲染纯文本
 app.get(public_path+'/test',function (requset,respone) {
     respone.set('Content-Type','text/plain');
-    respone.send('test')
+    respone.send('testestestestestestestest')
 })
 
 //从重定向redirect
@@ -123,6 +123,35 @@ app.get(public_path+'/form',function (request,respone) {
     respone.render('form');
 })
 
+var cookieSecret = require('./credentials');
+
+app.locals.globalValue = 'globalValue' //
+
+app.use(require('express-session')({secret:'stringthings'}));
+
+app.use(function (request,respone,next) {
+    request.session.flash = {
+        type:'type',
+        intro:'介绍',
+        message:'简介'
+    }
+    next();
+})
+
+app.use(function (request,respone,next) {
+    respone.locals.flash = request.session.flash;
+    respone.locals.test = 'testestestest';
+    console.log(app.locals.globalValue);
+    next();
+})
+
+app.get(public_path+"/message",function (request,respone) {
+    console.log(respone.locals.flash);
+    respone.render('message');
+})
+
+console.log(app.locals);
+
 app.post(public_path+"/post",function (request,respone) {
     console.log("表单提交");
     console.log(request.query);
@@ -134,26 +163,28 @@ app.post(public_path+"/post",function (request,respone) {
     console.log('body.v2:'+request.body.v2);
 })
 
-
 app.get(public_path+'/postimg',function (request,respone) {
     respone.render("postimg")
 })
-app.post(public_path+'/postimg',function (request,respone) {
-    // respone.status(200);
-    // console.log("有图片上传");
-    // respone.json({
-    //     message:'success'
-    // })
-    let form = new Formidable.IncomingForm();
-    form.parse(request,function(err,fields,files){
-        if(err){console.log('上传失败');}
-        console.log("received fielsd:");
-        console.log(fields);
-        console.log("receives files:");
-        console.log(files);
-        console.log("跳转链接到。。。。上传成功的页面");
-    })
-})
+// app.post(public_path+'/postimg',function (request,respone) {
+//     // respone.status(200);
+//     // console.log("有图片上传");
+//     // respone.json({
+//     //     message:'success'
+//     // })
+//     let form = new Formidable.IncomingForm();
+//     form.parse(request,function(err,fields,files){
+//         if(err){console.log('上传失败');}
+//         console.log("received fielsd:");
+//         console.log(fields);
+//         console.log("receives files:");
+//         console.log(files);
+//         console.log("跳转链接到。。。。上传成功的页面");
+//     })
+// })
+
+// import bz  from  './defalut.js';
+// console.log(bz);
 
 app.use((err,req,res,next)=> {
     console.error(err.stack);
