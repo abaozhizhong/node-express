@@ -14,7 +14,8 @@
   "scripts": {
     "test": "run",
     "dev": "node app.js",
-    "runmiddleware":"node middleware.js"
+    "runmiddleware":"node middleware.js",
+    "runenv":"node env.js"
   },
   "keywords": [
     "learn"
