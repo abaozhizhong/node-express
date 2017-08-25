@@ -6,16 +6,18 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
+    "express-logger": "0.0.3",
     "express-session": "^1.15.5",
     "express3-handlebars": "^0.5.2",
-    "formidable": "^1.1.1"
+    "formidable": "^1.1.1",
+    "morgan": "^1.7.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "run",
     "dev": "node app.js",
-    "runmiddleware":"node middleware.js",
-    "runenv":"node env.js"
+    "runmiddleware": "node middleware.js",
+    "runenv": "node env.js"
   },
   "keywords": [
     "learn"

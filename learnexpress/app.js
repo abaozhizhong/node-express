@@ -4,8 +4,11 @@ var body_parser = require('body-parser');
 // var Formidable = require('formidable');
 let public_path = '/static';
 let fortnues = require('./lib/fortnues');
+let qs = require('querystring')
 app.disable('x-powered-by');//屏蔽响应头中存在express的信息
 app.use(body_parser())//POST中间件
+
+var Bz = require('./functions');
 
 app.use('/static',express.static('public'))
 
@@ -26,6 +29,34 @@ let goods = [
         price:"1000"
     },
 ]
+
+
+
+
+//https://api.weibo.com/oauth2/authorize
+var https = require('https')
+//渲染纯文本
+app.get(public_path+'/test',function (requset,respone) {
+    respone.set('Content-Type','text/plain');
+    respone.send('testestestestestestestest')
+})
+
+
+app.get(public_path+'/index',function (request,respone) {
+    respone.render('index');
+    //模拟
+    let data = { client_id:'1742776748',redirect_uri:'http://192.168.17.69:3000/test'  }
+    let req =  https.request({protocal:'https:', host:'api.weibo.com',method:'GET',path:'/oauth2/authorize',port:null},function (res) {
+        res.on('data',function (data) {
+            console.log(Bz.bzToString(data));
+        })
+    })
+    req.write(qs.stringify(data));
+    req.on('end',function () {
+        console.log('亲自请求');
+    })
+})
+
 
 //提个一个个api
 app.get(public_path+'/api',function (request,respone) {
@@ -103,11 +134,7 @@ app.get(public_path+'/layout',function (request,respone)    {
         respone.render('a',{layout:'custom'});
 })
 
-//渲染纯文本
-app.get(public_path+'/test',function (requset,respone) {
-    respone.set('Content-Type','text/plain');
-    respone.send('testestestestestestestest')
-})
+
 
 //从重定向redirect
 app.get(public_path+'/redirect',function (request,respone) {
