@@ -10,69 +10,122 @@ app.use(body_parser())//POST中间件
 
 var Bz = require('./functions');
 
-app.use('/static',express.static('public'))
+app.use('/static', express.static('public'))
 
-app.set('port',process.env.PORT||3000);
+app.set('port', process.env.PORT || 3000);
 
-let handlebars = require('express3-handlebars').create({defaultLayout:'main'});//一堆模板引擎的东西
-app.engine('handlebars',handlebars.engine);
-app.set('view engine','handlebars');
+let handlebars = require('express3-handlebars').create({defaultLayout: 'main'});//一堆模板引擎的东西
+app.engine('handlebars', handlebars.engine);
+app.set('view engine', 'handlebars');
 let goods = [
     {
-        name:"我就是商品",
-        id:9527,
-        price:"1000"
+        name: "我就是商品",
+        id: 9527,
+        price: "1000"
     },
     {
-        name:"我就是商品",
-        id:9526,
-        price:"1000"
+        name: "我就是商品",
+        id: 9526,
+        price: "1000"
     },
 ]
 
 
-
-
 //https://api.weibo.com/oauth2/authorize
 var https = require('https')
+var http = require('http')
 //渲染纯文本
-app.get(public_path+'/test',function (requset,respone) {
-    respone.set('Content-Type','text/plain');
-    respone.send('testestestestestestestest')
+app.get(public_path + '/test', function (requset, respone) {
+    respone.render('test')
 })
 
 
-app.get(public_path+'/index',function (request,respone) {
+app.post(public_path + '/posttest', function (req, res) {
+    let mydata = {
+        client_id:1742776748,
+        client_secret:'ebb6d86f6bac78187a4f19f62bb64c2f',
+        grant_type:'authorization_code',
+        code:req.body.code,
+        redirect_uri:'http://192.168.17.69:3000/static/test'
+    }
+    let myrq =  https.request({
+        protocol: 'https:',
+        method: 'POST',
+        port: null,
+        host: 'api.weibo.com',
+        path: '/oauth2/access_token',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }, function (innerres) {
+        innerres.on('data', function (data) {
+            console.log(Bz.bzToString(data));
+            Bz.ApiRequest('api.weibo.com','/2/users/show.json','GET',{
+                // access_token:JSON.parse(Bz.bzToString(data)).access_token,
+                // appkey:'1742776748',
+                // client_id:'1742776748',
+                // client_secret:'ebb6d86f6bac78187a4f19f62bb64c2f',
+            },
+                function(a,b){
+                console.log(a);
+                console.log(b);
+            });
+            Bz.ApiRequest('api.weibo.com','/2/statuses/public_timeline.json','GET',{access_token:JSON.parse(Bz.bzToString(data))},function (a,b) {
+                console.log(a);
+                console.log(b);
+            })
+        }).on('end', function () {
+            console.log('停止响应');
+            res.json({'message': 'success'})
+        });
+
+    });
+    myrq.write(qs.stringify(mydata));
+    myrq.end();
+    // Bz.ApiRequest('api.weibo.com','/oauth2/access_token','POST',mydata,function (a,b) {
+    //     console.log(a);
+    //     console.log(b);
+    // },function (err) {
+    //     console.log(err);
+    // })
+
+
+})
+
+
+app.get(public_path + '/index', function (request, respone) {
     respone.render('index');
     //模拟
-    let data = { client_id:'1742776748',redirect_uri:'http://192.168.17.69:3000/test'  }
-    let req =  https.request({protocal:'https:', host:'api.weibo.com',method:'GET',path:'/oauth2/authorize',port:null},function (res) {
-        res.on('data',function (data) {
-            console.log(Bz.bzToString(data));
-        })
-    })
-    req.write(qs.stringify(data));
-    req.on('end',function () {
-        console.log('亲自请求');
-    })
+    // let data = { client_id:'1742776748',redirect_uri:'http://192.168.17.69:3000/test'  }
+    // let req =  https.request({protocal:'https:', host:'api.weibo.com',method:'GET',path:'/oauth2/authorize',port:null},function (res) {
+    //     res.on('data',function (data) {
+    //         console.log(Bz.bzToString(data));
+    //     })
+    // })
+    // req.write(qs.stringify(data));
+    // req.on('end',function () {
+    //     console.log('亲自请求');
+    // })
+    //https://api.weibo.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=YOUR_REGISTERED_REDIRECT_URI
+    respone.redirect('https://api.weibo.com/oauth2/authorize?client_id=1742776748&response_type=code&redirect_uri=http://192.168.17.69:3000/static/test')
 })
 
 
 //提个一个个api
-app.get(public_path+'/api',function (request,respone) {
+app.get(public_path + '/api', function (request, respone) {
     let a = {
-        age:19,
-        name:"abaozhi"
+        age: 19,
+        name: "abaozhi"
     }
     console.log(typeof request.query.blean); //返回来的数据是字符窜类型
-    if(Boolean(request.query.blean) == true){
+    if (Boolean(request.query.blean) == true) {
         respone.json(a)
     }
 })
 
 //更行商品good
-app.put(public_path+'/put/:id',function(request,respone){
-        console.log(respone.params);
+app.put(public_path + '/put/:id', function (request, respone) {
+    console.log(respone.params);
 })
 
 // app.get('/about',function(req,res){
@@ -93,60 +146,59 @@ app.put(public_path+'/put/:id',function(request,respone){
 //     res.send('500-Server Error')
 // })
 // 使用handlebars的新路由
-app.get(public_path,function (req,res ) {
+app.get(public_path, function (req, res) {
     res.render('home');
 })
 
-app.get(public_path+'/about',(req,res)=>{
+app.get(public_path + '/about', (req, res) => {
     let t = fortnues.getFortunes();
-    res.render('about',{a:t});
+    res.render('about', {a: t});
 })
 
-app.get(public_path+'/header',function (req,res) {
-    res.set('Content-Type','text/plain');
+app.get(public_path + '/header', function (req, res) {
+    res.set('Content-Type', 'text/plain');
     // console.log(res);
     let s = '';
-    for (var i in req.headers){
-        s += (i+":"+req.headers[i]+'\n');
+    for (var i in req.headers) {
+        s += (i + ":" + req.headers[i] + '\n');
     }
     console.log(req.headers);
     res.send(s)
 })
 
-app.get(public_path+'/query',function (request,res) {
+app.get(public_path + '/query', function (request, res) {
     //request.query  选中字符串参数
     console.log(request.query);
-    res.set('Content-Type','text/plain');
+    res.set('Content-Type', 'text/plain');
     res.send(JSON.stringify(request.query));
 })
 
-app.get(public_path+'/greeting',function (request,respone) {
+app.get(public_path + '/greeting', function (request, respone) {
     var obj = {
-        message:'welcome',
-        style:request.query.style
+        message: 'welcome',
+        style: request.query.style
     }
-    respone.render("greeting",{a:JSON.stringify(obj)}); //往页面传数据
+    respone.render("greeting", {a: JSON.stringify(obj)}); //往页面传数据
 })
 
 //使用定制布局渲染
-app.get(public_path+'/layout',function (request,respone)    {
-        console.log('LAYOUT');
-        respone.render('a',{layout:'custom'});
+app.get(public_path + '/layout', function (request, respone) {
+    console.log('LAYOUT');
+    respone.render('a', {layout: 'custom'});
 })
-
 
 
 //从重定向redirect
-app.get(public_path+'/redirect',function (request,respone) {
-    respone.redirect(200,public_path+'/test')
+app.get(public_path + '/redirect', function (request, respone) {
+    respone.redirect(200, public_path + '/test')
 })
 
-app.get(public_path+"/error",function (request,res) {
+app.get(public_path + "/error", function (request, res) {
     res.status(500);
     res.render('error');
 })
 
-app.get(public_path+'/form',function (request,respone) {
+app.get(public_path + '/form', function (request, respone) {
     respone.render('form');
 })
 
@@ -154,43 +206,43 @@ var cookieSecret = require('./credentials');
 
 app.locals.globalValue = 'globalValue' //
 
-app.use(require('express-session')({secret:'stringthings'}));
+app.use(require('express-session')({secret: 'stringthings'}));
 
-app.use(function (request,respone,next) {
+app.use(function (request, respone, next) {
     request.session.flash = {
-        type:'type',
-        intro:'介绍',
-        message:'简介'
+        type: 'type',
+        intro: '介绍',
+        message: '简介'
     }
     next();
 })
 
-app.use(function (request,respone,next) {
+app.use(function (request, respone, next) {
     respone.locals.flash = request.session.flash;
     respone.locals.test = 'testestestest';
     console.log(app.locals.globalValue);
     next();
 })
 
-app.get(public_path+"/message",function (request,respone) {
+app.get(public_path + "/message", function (request, respone) {
     console.log(respone.locals.flash);
     respone.render('message');
 })
 
 console.log(app.locals);
 
-app.post(public_path+"/post",function (request,respone) {
+app.post(public_path + "/post", function (request, respone) {
     console.log("表单提交");
     console.log(request.query);
-    if(request.xhr==true){
+    if (request.xhr == true) {
         console.log("this  is a ajax request");
     }
-    console.log('body.v1:'+request.body.v1);
-    console.log('body.v3:'+request.body.v3);
-    console.log('body.v2:'+request.body.v2);
+    console.log('body.v1:' + request.body.v1);
+    console.log('body.v3:' + request.body.v3);
+    console.log('body.v2:' + request.body.v2);
 })
 
-app.get(public_path+'/postimg',function (request,respone) {
+app.get(public_path + '/postimg', function (request, respone) {
     respone.render("postimg")
 })
 // app.post(public_path+'/postimg',function (request,respone) {
@@ -213,7 +265,7 @@ app.get(public_path+'/postimg',function (request,respone) {
 // import bz  from  './defalut.js';
 // console.log(bz);
 
-app.use((err,req,res,next)=> {
+app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500);
     res.render('500');
@@ -226,8 +278,8 @@ app.use((req, res, next) => {
 });
 
 
-app.listen(app.get('port'), function(){
-    console.log( 'Express started on http://localhost:' +
-        app.get('port') + '; press Ctrl-C to terminate.' );
+app.listen(app.get('port'), function () {
+    console.log('Express started on http://localhost:' +
+        app.get('port') + '; press Ctrl-C to terminate.');
 });
 

@@ -1,3 +1,28 @@
 <p1>
-    index  .......
+    index .......
 </p1>
+<div id="windows">
+
+</div>
+<style>
+    #windows{
+        position: fixed;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        display: none;
+    }
+</style>
+<script>
+    //https://api.weibo.com/oauth2/authorize?client_id=1742776748&redirect_uri=http://192.168.17.69:3000/test
+    $.ajax({
+        type: 'get',
+        data: {client_id: '1742776748', redirect_uri:'http://192.168.17.69:3000/test'},
+        url: "https://api.weibo.com/oauth2/authorize",
+        success:function(data){
+            console.log(data);
+//            $('#windows').html(data).fadeIn();
+        }
+    })
+</script>

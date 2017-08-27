@@ -1,0 +1,14 @@
+<div>test</div>
+<script>
+    console.log(window.location.href.split('=')[1]);
+    $.ajax(({
+        type:'post',
+        url:'/static/posttest?form=iamform',
+        data:{
+            code:window.location.href.split('=')[1]
+        },
+        success:function (data) {
+            console.log(data);
+        }
+    }))
+</script>

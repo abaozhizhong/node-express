@@ -85,6 +85,7 @@ function ApiRequest(host, path, method, data, okCallback, errorCallback) {
 
     })
     if (data != null) {
+        qs.stringify(data)
         client.write(qs.stringify(data))
     }
     client.end();
