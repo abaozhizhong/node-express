@@ -55,5 +55,35 @@ module.exports = {
         client.write(qs.stringify(data))
     }
     client.end();
-}
+},
+    bzApirequest: function(host,path,method,data,okCallback,errorCallback){
+        let option = {
+            host:host,
+            path:path,
+            method:method,
+            headers:{
+                'Content-Type':'application/x-www-form-urlencoded'
+            }
+        }
+        isGet = method == 'GET' ? true : false;
+        if(isGet){
+            option.path += '?'
+            for(var i in data){
+                option.path += (i +'='+ data[i]+'&')
+            }
+        }
+        console.log('request path:'+option.path);
+
+        let client = https.request(option,function (res) {
+            let chunks  = []
+            res.on('data',function (data) {
+                chunks.push(data)
+            })
+            res.on('end',function (data){
+                okCallback(chunks)
+            })
+        })
+        isGet?'':client.write(qs.stringify(data));
+        client.end();
+    }
 }

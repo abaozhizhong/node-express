@@ -59,20 +59,9 @@ app.post(public_path + '/posttest', function (req, res) {
         }
     }, function (innerres) {
         innerres.on('data', function (data) {
-            console.log(Bz.bzToString(data));
-            Bz.ApiRequest('api.weibo.com','/2/users/show.json','GET',{
-                // access_token:JSON.parse(Bz.bzToString(data)).access_token,
-                // appkey:'1742776748',
-                // client_id:'1742776748',
-                // client_secret:'ebb6d86f6bac78187a4f19f62bb64c2f',
-            },
-                function(a,b){
-                console.log(a);
-                console.log(b);
-            });
-            Bz.ApiRequest('api.weibo.com','/2/statuses/public_timeline.json','GET',{access_token:JSON.parse(Bz.bzToString(data))},function (a,b) {
-                console.log(a);
-                console.log(b);
+            let temp = JSON.parse(data);
+            Bz.bzApirequest('api.weibo.com','/2/users/show.json','GET',{access_token:temp.access_token,uid:temp.uid},function (data) {
+                console.log('成功拿到用户数据:',Bz.bzToString(data));
             })
         }).on('end', function () {
             console.log('停止响应');
@@ -107,7 +96,7 @@ app.get(public_path + '/index', function (request, respone) {
     //     console.log('亲自请求');
     // })
     //https://api.weibo.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=YOUR_REGISTERED_REDIRECT_URI
-    respone.redirect('https://api.weibo.com/oauth2/authorize?client_id=1742776748&response_type=code&redirect_uri=http://192.168.17.69:3000/static/test')
+    respone.redirect('https://api.weibo.com/oauth2/authorize?client_id=1742776748&response_type=code&redirect_uri=http://192.168.17.69:3000/static/test&forcelogin=true')
 })
 
 
@@ -283,3 +272,79 @@ app.listen(app.get('port'), function () {
         app.get('port') + '; press Ctrl-C to terminate.');
 });
 
+
+//
+// //temp
+// function asyncFunction(data,callback) {
+//     console.log('等等会有回调函数:',data);
+//     process.nextTick(function () {
+//         callback(520)
+//     })
+// }
+// asyncFunction('是的',function (a) {
+//     console.log('传递的参数是：'+a);
+// });console.log('我比callback更加快？？');
+//
+// function myFun(x,y) {
+//     console.log('x*y equal to '+x*y);
+// }
+//
+// setTimeout(myFun,5000,10,10)
+//
+// //TCP服务器端
+// var net = require('net');
+// var server = net.createServer(function (conn) {
+//     console.log('connected');
+//     conn.on('data',function (data) {
+//         console.log(data + 'from' + conn.remoteAddress +":"+ conn.remotePort);
+//     //    conn.write('repeating'+data);
+//     })
+//     conn.on('close',function () {
+//         console.log('client closed connection');
+//     })
+// }).listen(8124)
+//
+// //TCP客户端
+// var net  = require('net')
+// let client = new net.Socket();
+// client.setEncoding('utf8');
+// client.connect('8124','localhost',function () {
+//     console.log('connneted to server');
+//     client.write('whio needs a browser to communicate?');
+// })
+// process.stdin.resume();
+// process.stdin.on('data',function (data) {
+//     client.write(data);
+// })
+// client.on('data',function (data) {
+//     console.log('client recevie data from stdin:'+data);
+// })
+//
+// //'aaaaa'
+// process.stdin.resume();
+// process.stdin.pipe(process.stdout,{end:false});
+//
+// let readline  = require('readline')
+// var interface = readline.createInterface(process.stdin,process.stdout,null);
+// inerface.question('What is the meaning of life? ',function(answer){
+//     console.log('About the meaning of life,you said'+  answer);
+//     interface.setPrompt('>>');
+//     inerface.prompt();
+// })
+// function closeInterface(){
+//     console.log('leaveing  interface...');
+//     process.exit();
+// }
+// interface.on('line '.function(cmd){
+//     if(cmd.trim()=='.leave'){
+//         closeInterface();
+//         return;
+//     }else{
+//         console.log('repeating command:'+cmd);
+//     }
+//     interface.setPrompt(">>");
+//     interface.prompt();
+// })
+// interface.on('close',function(){
+//     closeInterface();
+// })
