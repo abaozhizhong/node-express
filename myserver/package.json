@@ -1,0 +1,15 @@
+{
+  "name": "myserver",
+  "version": "1.0.0",
+  "description": "使用express与一点点原生node解决跨域转发",
+  "main": "myserver.js",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4"
+  },
+  "scripts": {
+    "node": "node myserver.js"
+  },
+  "author": "bz",
+  "license": "ISC"
+}
