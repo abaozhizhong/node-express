@@ -32,7 +32,8 @@ module.exports = {
                         chunks.push(data);
                     })
                     res.on('end',function (data) {
-                        okcallback(chunks)
+                        let body = Buffer.concat(chunks)
+                        okcallback(body)
                     })
             })
             if(!isGet){

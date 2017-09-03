@@ -11,7 +11,9 @@ let success = {
 
 }
 
-
+/*
+* 读取微博
+*/
 //获取授权code
 app.get('/authorize',function (req,res) {
     res.redirect('https://api.weibo.com/oauth2/authorize?'+'client_id='+CONFIG.APPKEY+'&redirect_uri='+CONFIG.REDERECTURL+"&forcelogin="+'false')
@@ -76,7 +78,17 @@ app.get('/go',function (req,res) {
     })
 })
 
-
+app.get('/commentsshow',function (req,res) {
+    let data = {
+        access_token:req.query.access_token,
+        id:req.query.id,
+        count:req.query.count,
+        page:req.query.page
+    }
+    x.apiRequest('GET',CONFIG.HOST,CONFIG.COMMENTSSHOW,data,function (data) {
+        res.json(x.toString(data));
+    })
+})
 app.listen(3000,function (res) {
     console.log('myserver running in port 3000');
 })
