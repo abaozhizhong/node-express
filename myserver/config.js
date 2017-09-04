@@ -7,9 +7,7 @@
 //http://open.weibo.com/wiki/2/users/show
 module.exports = {
     HOST:'api.weibo.com',
-    APPKEY:'1742776748',
-    APPSECRET:'ebb6d86f6bac78187a4f19f62bb64c2f',
-    REDERECTURL:'http://192.168.17.69:3000/index.html',
+
     //PATH
     //读取微博
     TOKEN:'/oauth2/access_token',
@@ -20,4 +18,8 @@ module.exports = {
 
     //评论
     COMMENTSSHOW:'/2/comments/show.json',
+
+    //搜索某个话题下的微博
+    TOPICS:'/2/search/topics.json'
+
 }
